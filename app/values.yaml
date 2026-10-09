@@ -1,0 +1,68 @@
+# Defaults for the shared mogambo chart.
+# Each unit overrides these from its own values-<svc>-<ver>/values.yaml.
+
+enabled: "true"          # read by the ArgoCD ApplicationSet selector, NOT by the chart itself
+
+app: ""                  # REQUIRED base name, e.g. "frontend"
+versionLine: ""          # REQUIRED version line, e.g. "1-0"  ->  objects named <app>-<versionLine>
+
+kind: Deployment         # Deployment | StatefulSet
+
+image:
+  repository: ""
+  tag: ""                # repo:tag   (used when digest is empty)
+  digest: ""             # repo@sha256:...  (takes precedence over tag when set)
+  pullPolicy: IfNotPresent
+
+# --- Deployment-only ---
+replicas: 1              # ignored when hpa.enabled (HPA owns the count)
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+serviceAccount:
+  create: true
+  automount: false
+
+podAnnotations: {}
+
+containerPort: 0
+portName: http
+extraContainerPorts: []
+
+env: []
+envFrom: []
+
+resources: {}
+
+probes:
+  readiness: {}
+  liveness: {}
+  startup: {}
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 0
+  targetPort: 0
+  headless: false        # true for DB headless services
+  extraPorts: []
+
+hpa:
+  enabled: false
+  min: 1
+  max: 1
+  targetCPU: 80
+
+config: {}               # -> ConfigMap data   (rendered only when non-empty)
+secrets: {}              # -> Secret stringData (rendered only when non-empty)
+
+# --- StatefulSet-only ---
+persistence:
+  enabled: false
+  size: 1Gi
+  mountPath: ""
+  storageClassName: ""
+  accessModes: ["ReadWriteOnce"]
