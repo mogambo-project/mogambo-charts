@@ -4,7 +4,8 @@
 enabled: "true"          # read by the ArgoCD ApplicationSet selector, NOT by the chart itself
 
 app: ""                  # REQUIRED base name, e.g. "frontend"
-versionLine: ""          # REQUIRED version line, e.g. "1-0"  ->  objects named <app>-<versionLine>
+versionLine: ""          # version line, e.g. "1-0" -> objects named <app>-<versionLine> (versioned apps)
+fullnameOverride: ""     # set for singletons (DBs) to pin an exact name, e.g. "catalogue-db"
 
 kind: Deployment         # Deployment | StatefulSet
 
@@ -32,6 +33,8 @@ containerPort: 0
 portName: http
 extraContainerPorts: []
 
+command: []
+args: []
 env: []
 envFrom: []
 

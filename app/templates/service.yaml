@@ -8,9 +8,6 @@ metadata:
     {{- include "app.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
-  {{- if .Values.service.headless }}
-  clusterIP: None
-  {{- end }}
   selector:
     {{- include "app.labels" . | nindent 4 }}
   ports:
@@ -20,4 +17,23 @@ spec:
     {{- with .Values.service.extraPorts }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+{{- if .Values.service.headless }}
+---
+# Headless service for StatefulSet stable DNS (StatefulSet.serviceName points here).
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    {{- include "app.labels" . | nindent 4 }}
+  ports:
+    - name: {{ .Values.portName }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+{{- end }}
 {{- end }}
