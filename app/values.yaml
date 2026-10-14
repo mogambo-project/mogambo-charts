@@ -59,6 +59,11 @@ hpa:
   max: 1
   targetCPU: 80
 
+vpa:
+  enabled: false
+  updateMode: "Off"        # Off (recommend only) | Initial (set at pod creation) | Auto | Recreate
+  resourcePolicy: {}       # e.g. containerPolicies: [{containerName: "*", minAllowed/maxAllowed, controlledResources}]
+
 config: {}               # -> ConfigMap data   (rendered only when non-empty)
 secrets: {}              # -> Secret stringData (rendered only when non-empty)
 
