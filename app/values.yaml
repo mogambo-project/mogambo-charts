@@ -35,7 +35,7 @@ extraContainerPorts: []
 
 command: []
 args: []
-env: []
+env: {}                  # map of NAME: value -> rendered as container env vars
 envFrom: []
 
 resources: {}

@@ -44,7 +44,10 @@ spec:
           {{- end }}
           {{- with .Values.env }}
           env:
-            {{- toYaml . | nindent 12 }}
+            {{- range $k, $v := . }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
           {{- end }}
           {{- with .Values.envFrom }}
           envFrom:
