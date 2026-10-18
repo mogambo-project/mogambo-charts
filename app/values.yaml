@@ -53,6 +53,15 @@ service:
   headless: false        # true for DB headless services
   extraPorts: []
 
+route:                   # Gateway API HTTPRoute (external exposure) — opt-in per unit
+  enabled: false
+  gateway: ""            # name of the shared Gateway to attach to (parentRef)
+  gatewayNamespace: ""   # optional: Gateway in another namespace
+  sectionName: ""        # optional: a specific Gateway listener
+  host: ""
+  path: "/"
+  pathType: PathPrefix
+
 hpa:
   enabled: false
   min: 1
