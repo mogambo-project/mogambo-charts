@@ -1,0 +1,3 @@
+Error: YAML parse error on app/templates/deployment.yaml: error converting YAML to JSON: yaml: line 4: block sequence entries are not allowed in this context
+
+Use --debug flag to render out invalid YAML

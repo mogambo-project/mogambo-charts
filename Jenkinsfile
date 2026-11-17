@@ -36,6 +36,34 @@ pipeline {
       }
     }
 
+    stage('Lint & validate') {
+      when { branch 'master' }   // gate the chart BEFORE we package/publish it
+      steps {
+        // kubeconform validates the RENDERED manifests against the Kubernetes schemas.
+        sh '''
+          if ! command -v kubeconform >/dev/null 2>&1 && [ ! -x ./kubeconform ]; then
+            curl -fsSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz kubeconform
+            install -m 0755 kubeconform ./kubeconform
+          fi
+        '''
+        script {
+          env.KUBECONFORM = sh(script: 'command -v kubeconform >/dev/null 2>&1 && echo kubeconform || echo ./kubeconform', returnStdout: true).trim()
+        }
+        // For each CI fixture: helm lint (also validates values.schema.json), then render and
+        // kubeconform the output. -ignore-missing-schemas skips CRDs we don't ship schemas for
+        // (HTTPRoute, VPA) while still strictly checking the core kinds (Deployment, Service, ...).
+        sh """
+          set -eu
+          for v in ${env.CHART_DIR}/ci/*-values.yaml; do
+            echo "== lint \$v =="
+            ${env.HELM} lint ${env.CHART_DIR} --values "\$v"
+            echo "== template + kubeconform \$v =="
+            ${env.HELM} template ${env.CHART_DIR} --values "\$v" | ${env.KUBECONFORM} -strict -ignore-missing-schemas -summary
+          done
+        """
+      }
+    }
+
     stage('Resolve version') {
       when { branch 'master' }
       steps {

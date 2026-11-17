@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "mogambo shared app chart — values",
+  "description": "Validates each unit's values.yaml at render time. A typo (unknown key) or a wrong type/enum fails fast with a clear message instead of rendering a broken manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "enabled": {
+      "type": ["string", "boolean"],
+      "description": "Read by the ArgoCD ApplicationSet selector, not by the chart."
+    },
+    "app": { "type": "string" },
+    "versionLine": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "kind": { "type": "string", "enum": ["Deployment", "StatefulSet"] },
+
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "digest": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+      }
+    },
+
+    "replicas": { "type": "integer", "minimum": 0 },
+    "strategy": { "type": "object" },
+
+    "serviceAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "create": { "type": "boolean" },
+        "automount": { "type": "boolean" }
+      }
+    },
+
+    "podAnnotations": { "type": "object", "additionalProperties": { "type": "string" } },
+
+    "containerPort": { "type": "integer" },
+    "portName": { "type": "string" },
+    "extraContainerPorts": { "type": "array" },
+
+    "command": { "type": "array", "items": { "type": "string" } },
+    "args": { "type": "array", "items": { "type": "string" } },
+    "env": { "type": "object", "additionalProperties": { "type": ["string", "integer", "boolean"] } },
+    "envFrom": { "type": "array" },
+
+    "resources": { "type": "object" },
+
+    "probes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "readiness": { "type": "object" },
+        "liveness": { "type": "object" },
+        "startup": { "type": "object" }
+      }
+    },
+
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "type": { "type": "string", "enum": ["ClusterIP", "NodePort", "LoadBalancer"] },
+        "port": { "type": "integer" },
+        "targetPort": { "type": ["integer", "string"] },
+        "headless": { "type": "boolean" },
+        "extraPorts": { "type": "array" }
+      }
+    },
+
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "gateway": { "type": "string" },
+        "gatewayNamespace": { "type": "string" },
+        "sectionName": { "type": "string" },
+        "host": { "type": "string" },
+        "path": { "type": "string" },
+        "pathType": { "type": "string", "enum": ["PathPrefix", "Exact", "ImplementationSpecific"] }
+      }
+    },
+
+    "hpa": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "min": { "type": "integer", "minimum": 1 },
+        "max": { "type": "integer", "minimum": 1 },
+        "targetCPU": { "type": "integer", "minimum": 1, "maximum": 100 }
+      }
+    },
+
+    "vpa": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "updateMode": { "type": "string", "enum": ["Off", "Initial", "Auto", "Recreate"] },
+        "resourcePolicy": { "type": "object" }
+      }
+    },
+
+    "config": { "type": "object" },
+    "secrets": { "type": "object" },
+
+    "persistence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "size": { "type": "string" },
+        "mountPath": { "type": "string" },
+        "storageClassName": { "type": "string" },
+        "accessModes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

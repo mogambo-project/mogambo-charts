@@ -1,0 +1,24 @@
+# CI fixture — a StatefulSet singleton (a DB) with persistence, a headless Service, VPA and a Secret.
+# Exercises the StatefulSet branch of the chart and the values.schema.json. Not a real deployment.
+fullnameOverride: demo-db
+kind: StatefulSet
+image:
+  repository: example/demo-db
+  tag: "1.0"
+containerPort: 5432
+envFrom:
+  - secretRef: { name: demo-db }
+service:
+  enabled: true
+  port: 5432
+  targetPort: 5432
+  headless: true
+persistence:
+  enabled: true
+  size: 1Gi
+  mountPath: /var/lib/data
+vpa:
+  enabled: true
+  updateMode: "Off"
+secrets:
+  PASSWORD: "example"

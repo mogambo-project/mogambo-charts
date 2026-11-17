@@ -1,0 +1,34 @@
+# CI fixture — a Deployment unit with a Service, an HTTPRoute and an HPA.
+# Used by `helm lint` / `helm template` + kubeconform in the chart pipeline to exercise the
+# Deployment branch of the chart and the values.schema.json. Not a real deployment.
+app: demo-web
+versionLine: "1-0"
+kind: Deployment
+image:
+  repository: example/demo-web
+  tag: "1.0.0-1"
+containerPort: 8079
+env:
+  SESSION_REDIS: "true"
+  CATALOGUE_URL: "http://catalogue-1-0"
+resources:
+  requests: { cpu: "20m", memory: "64Mi" }
+  limits:   { memory: "256Mi" }
+probes:
+  readiness: { httpGet: { path: /, port: 8079 } }
+  liveness:  { tcpSocket: { port: 8079 } }
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: 8079
+route:
+  enabled: true
+  gateway: mogambo
+  host: demo.localtest.me
+  path: /
+hpa:
+  enabled: true
+  min: 2
+  max: 4
+  targetCPU: 80
