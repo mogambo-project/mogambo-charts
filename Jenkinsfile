@@ -43,7 +43,7 @@ pipeline {
         sh '''
           if ! command -v kubeconform >/dev/null 2>&1 && [ ! -x ./kubeconform ]; then
             curl -fsSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz kubeconform
-            install -m 0755 kubeconform ./kubeconform
+            chmod +x ./kubeconform   # tarball extracts the binary straight to ./kubeconform (no subdir)
           fi
         '''
         script {

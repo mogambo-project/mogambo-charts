@@ -1,5 +1,8 @@
 # CI fixture — a StatefulSet singleton (a DB) with persistence, a headless Service, VPA and a Secret.
 # Exercises the StatefulSet branch of the chart and the values.schema.json. Not a real deployment.
+# DB singletons set BOTH app (container name + labels) and fullnameOverride (the pinned object name),
+# matching the real catalogue-db / carts-db units.
+app: demo-db
 fullnameOverride: demo-db
 kind: StatefulSet
 image:
